@@ -53,6 +53,15 @@ class Article extends Model
             ->get();
     }
 
+    public function getFilteredTotal(array $filters): Collection
+    {
+        return $this->filter($filters, 'tag', 'tags', 'name')
+            ->filter($filters, 'author', 'user', 'username')
+            ->filter($filters, 'favorited', 'users', 'username')
+            ->with('user', 'users', 'tags', 'user.followers')
+            ->get();
+    }
+
     public function scopeFilter($query, array $filters, string $key, string $relation, string $column)
     {
         return $query->when(array_key_exists($key, $filters), function ($q) use ($filters, $relation, $column, $key) {
